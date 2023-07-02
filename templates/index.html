@@ -3,38 +3,56 @@
 <head>
     <title>Crop Image</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
+    <style>
+        .col {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container py-5">
         <h1 class="mb-4">Crop Image</h1>
-        <form id="cropForm" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="file" class="form-label">Select image:</label>
-                <input type="file" name="file" id="file" class="form-control-file" onchange="previewImage(event)">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col">
+                    <h2>Select Image</h2>
+                    <form id="cropForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Select image:</label>
+                            <input type="file" name="file" id="file" class="form-control-file" onchange="previewImage(event)">
+                        </div>
+                        <div class="mb-3" id="imagePreview"></div>
+                        <div class="mb-3" id="cropOptions" style="display: none;">
+                            <label for="position" class="form-label">Crop position:</label>
+                            <select name="position" id="position" class="form-select">
+                                <option value="top_left">Top Left</option>
+                                <option value="top_center">Top Center</option>
+                                <option value="top_right">Top Right</option>
+                                <option value="center_left">Center Left</option>
+                                <option value="center">Center</option>
+                                <option value="center_right">Center Right</option>
+                                <option value="bottom_left">Bottom Left</option>
+                                <option value="bottom_center">Bottom Center</option>
+                                <option value="bottom_right">Bottom Right</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="sizeInput" style="display: none;">
+                            <label for="size" class="form-label">Crop size:</label>
+                            <input type="number" name="size" id="size" class="form-control" min="1" value="100">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3" id="imagePreview"></div>
-            <div class="mb-3" id="cropOptions" style="display: none;">
-                <label for="position" class="form-label">Crop position:</label>
-                <select name="position" id="position" class="form-select">
-                    <option value="top_left">Top Left</option>
-                    <option value="top_center">Top Center</option>
-                    <option value="top_right">Top Right</option>
-                    <option value="center_left">Center Left</option>
-                    <option value="center">Center</option>
-                    <option value="center_right">Center Right</option>
-                    <option value="bottom_left">Bottom Left</option>
-                    <option value="bottom_center">Bottom Center</option>
-                    <option value="bottom_right">Bottom Right</option>
-                </select>
+            <div class="col-md-6">
+                <div class="col">
+                    <h2>Cropped Result</h2>
+                    <div id="croppedImage"></div>
+                </div>
             </div>
-            <div class="mb-3" id="sizeInput" style="display: none;">
-                <label for="size" class="form-label">Crop size:</label>
-                <input type="number" name="size" id="size" class="form-control" min="1" value="100">
-            </div>
-            <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
-        </form>
-
-        <div id="croppedImage"></div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
@@ -49,18 +67,15 @@
                 document.getElementById("imagePreview").appendChild(imgElement);
                 document.getElementById("cropOptions").style.display = "block";
                 document.getElementById("sizeInput").style.display = "block";
-
-                // Set the dynamic max property for the Crop size input
                 document.getElementById("size").max = Math.min(imgElement.naturalWidth, imgElement.naturalHeight);
             }
             reader.readAsDataURL(event.target.files[0]);
         }
 
-
         function cropImage() {
             var sizeInput = document.getElementById("size");
             var size = parseInt(sizeInput.value, 10);
-            var imgElement = document.getElementById("imagePreview").getElementsByTagName("img")[0];
+            var imgElement = document.getElementById("imagePreview").querySelector("img");
             var maxWidth = imgElement.naturalWidth;
             var maxHeight = imgElement.naturalHeight;
 
@@ -87,18 +102,21 @@
             xhr.send(formData);
         }
 
-
         function saveAsMarkdown() {
             var fileName = "crop_image.md";
-            var markdownContent = "<h1>Crop Image</h1>\n\n";
-            markdownContent += "<h2>Selected Image:</h2>\n\n";
-            markdownContent += "![Selected Image](data:image/jpeg;base64," + document.getElementById("imagePreview").getElementsByTagName("img")[0].src.split(",")[1] + ")\n\n";
-            markdownContent += "<h2>Crop Position:</h2>\n\n";
-            markdownContent += "- " + document.getElementById("position").value + "\n\n";
-            markdownContent += "<h2>Crop Size:</h2>\n\n";
-            markdownContent += "- " + document.getElementById("size").value + "\n\n";
-            markdownContent += "<h2>Cropped Image:</h2>\n\n";
-            markdownContent += "![Cropped Image](data:image/jpeg;base64," + document.getElementById("croppedImage").getElementsByTagName("img")[0].src.split(",")[1] + ")";
+            var markdownContent = `# Crop Image
+
+## Selected Image:
+![Selected Image](data:image/jpeg;base64,${getImageBase64("imagePreview")})
+
+## Crop Position:
+- ${document.getElementById("position").value}
+
+## Crop Size:
+- ${document.getElementById("size").value}
+
+## Cropped Image:
+![Cropped Image](data:image/jpeg;base64,${getImageBase64("croppedImage")})`;
 
             var element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(markdownContent));
@@ -109,6 +127,10 @@
             document.body.removeChild(element);
         }
 
+
+        function getImageBase64(elementId) {
+            return document.getElementById(elementId).querySelector("img").src.split(",")[1];
+        }
     </script>
 </body>
 </html>
