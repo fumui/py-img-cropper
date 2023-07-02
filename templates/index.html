@@ -50,6 +50,10 @@
                 <div class="col">
                     <h2>Cropped Result</h2>
                     <div id="croppedImage"></div>
+                    <div class="d-flex justify-content-around mt-4">
+                        <button class="btn btn-primary download-btn" id="downloadMarkdownBtn" onclick="saveAsMarkdown()" style="display: none;">Download Markdown</button>
+                        <button class="btn btn-primary download-btn" id="downloadImageBtn" onclick="saveAsImage()" style="display: none;">Download Cropped Image</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,7 +100,8 @@
                     imgElement.style.maxWidth = "500px";
                     document.getElementById("croppedImage").innerHTML = "";
                     document.getElementById("croppedImage").appendChild(imgElement);
-                    saveAsMarkdown();
+                    document.getElementById("downloadMarkdownBtn").style.display = "inline-block";
+                    document.getElementById("downloadImageBtn").style.display = "inline-block";
                 }
             };
             xhr.send(formData);
@@ -127,6 +132,17 @@
             document.body.removeChild(element);
         }
 
+        function saveAsImage() {
+            var fileName = "cropped_image.jpg";
+            var imgSrc = document.getElementById("croppedImage").querySelector("img").src;
+            var element = document.createElement('a');
+            element.setAttribute('href', imgSrc);
+            element.setAttribute('download', fileName);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
 
         function getImageBase64(elementId) {
             return document.getElementById(elementId).querySelector("img").src.split(",")[1];
