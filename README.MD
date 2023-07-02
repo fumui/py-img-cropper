@@ -58,4 +58,4 @@ Py Image Cropper is a web application that allows you to upload an image, previe
 
 8. View the resulting cropped image.
 
-9. Click the "Download" button to save the entire web app display, including the image picker, preview, crop position, crop size, and the cropped image, as a markdown file.
+9. Download the resulting cropped image as a markdown file or an image.
