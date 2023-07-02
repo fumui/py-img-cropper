@@ -30,27 +30,7 @@ Py Image Cropper is a web application that allows you to upload an image, previe
    cd crop-image-web-app
    ```
 
-3. Create a virtual environment:
-
-   ```bash
-   python3 -m venv venv
-   ```
-
-4. Activate the virtual environment:
-
-   - On macOS and Linux:
-
-     ```bash
-     source venv/bin/activate
-     ```
-
-   - On Windows:
-
-     ```bash
-     venv\Scripts\activate
-     ```
-
-5. Install the dependencies:
+3. Install the dependencies:
 
    ```bash
    pip install -r requirements.txt
