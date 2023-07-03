@@ -27,7 +27,7 @@ Py Image Cropper is a web application that allows you to upload an image, previe
 2. Change to the project directory:
 
    ```bash
-   cd crop-image-web-app
+   cd py-img-cropper
    ```
 
 3. Install the dependencies:
